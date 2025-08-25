@@ -1,48 +1,41 @@
-import { useState } from "react";
-import Register from "./pages/Register";
-import Login from "./pages/Login";
-import Profile from "./pages/Profile";
+import { useEffect, useState } from "react";
 import Hero from "./pages/Hero";
+import AuthPage from "./pages/AuthPage";
+import Home from "./pages/Home";
+import API from "./utils/api"; // your axios instance with withCredentials: true
 
-function App() {
-  const [page, setPage] = useState<"hero" | "register" | "login" | "profile">("hero");
+type Page = "hero" | "auth" | "home";
+
+export default function App() {
+  const [page, setPage] = useState<Page>("hero");
+  const [user, setUser] = useState<any>(null);
+
+  // ✅ Check if user is already logged in on page load
+  useEffect(() => {
+    API.get("/auth/me")
+      .then((res) => {
+        setUser((res.data as { user: any }).user);
+        setPage("home");
+      })
+      .catch(() => {
+        setUser(null);
+      });
+  }, []);
+
+  // ✅ Handle logout
+  const handleLogout = async () => {
+    await API.post("/auth/logout");
+    setUser(null);
+    setPage("auth");
+  };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 p-6">
-      {/* Navigation - show only if not on Hero */}
-      {page !== "hero" && (
-        <div className="flex space-x-4 mb-10 bg-white rounded-full shadow-lg px-6 py-2">
-          <button
-            onClick={() => setPage("register")}
-            className={`px-4 py-2 rounded-full font-semibold transition ${page === "register" ? "bg-indigo-500 text-white" : "text-gray-700"
-              }`}
-          >
-            Register
-          </button>
-          <button
-            onClick={() => setPage("login")}
-            className={`px-4 py-2 rounded-full font-semibold transition ${page === "login" ? "bg-green-500 text-white" : "text-gray-700"
-              }`}
-          >
-            Login
-          </button>
-          <button
-            onClick={() => setPage("profile")}
-            className={`px-4 py-2 rounded-full font-semibold transition ${page === "profile" ? "bg-pink-500 text-white" : "text-gray-700"
-              }`}
-          >
-            Profile
-          </button>
-        </div>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 p-6">
+      {page === "hero" && <Hero onGetStarted={() => setPage("auth")} />}
+      {page === "auth" && <AuthPage setPage={setPage} />}
+      {page === "home" && (
+        <Home user={user} onLogout={handleLogout} />
       )}
-
-      {/* Pages */}
-      {page === "hero" && <Hero onGetStarted={() => setPage("register")} />}
-      {page === "register" && <Register />}
-      {page === "login" && <Login />}
-      {page === "profile" && <Profile />}
     </div>
   );
 }
-
-export default App;

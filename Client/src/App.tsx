@@ -1,11 +1,20 @@
-import { Button } from "@/components/ui/button"
+import React from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Hero from "./pages/Hero";
+import Auth from "./pages/Auth";
+import Dashboard from "./pages/Dashboard";
 
-function App() {
+const App: React.FC = () => {
   return (
-    <div className="flex min-h-svh flex-col items-center justify-center">
-      <Button>Click me</Button>
-    </div>
-  )
-}
+    <Router>
+      <Routes>
+        <Route path="/" element={<Hero />} />
+        <Route path="/auth" element={<Auth />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+      </Routes>
+    </Router>
+  );
+};
 
-export default App
+export default App;
+export { App };

@@ -2,7 +2,7 @@ const User = require('../models/Users');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
-const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret_here';
+const JWT_SECRET = process.env.JWT_SECRET || 'dev';
 
 exports.login = async (req, res) => {
     try {
@@ -21,9 +21,18 @@ exports.login = async (req, res) => {
         }
 
         // Generate JWT
-        const token = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: '7d' });
+        const token = jwt.sign({ id: user.id }, JWT_SECRET, { expiresIn: '7d' });
 
-        res.status(200).json({ token, user });
+        // Set token in HTTP-only cookie
+        res.cookie('uid', token, {
+            httpOnly: true, // cannot be accessed by JS
+            secure: process.env.NODE_ENV === 'production', // HTTPS only in production
+            sameSite: 'lax', // protects against CSRF
+            maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+        });
+
+        // Send only user info in JSON (no token)
+        res.status(200).json({ user });
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Server Error' });

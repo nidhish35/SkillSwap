@@ -6,6 +6,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 
+
 interface Post {
     _id: string;
     title: string;

@@ -14,10 +14,14 @@ const userSchema = new mongoose.Schema({
     },
     password: {
         type: String,
-        required: true
+        // required: true
     },
     profilePicture: {
         type: String // URL to profile picture
+    },
+    googleId: { type: String,
+        unique: true,
+        sparse: true
     },
     bio: {
         type: String,

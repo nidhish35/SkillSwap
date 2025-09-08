@@ -3,6 +3,10 @@ const mongoose = require('mongoose');
 const authRoutes = require('./routes/authRoutes');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
+const passport = require('passport'); // <-- Import Passport
+require('dotenv').config(); // <-- Load .env variables
+require('./config/passport-setup'); // <-- This runs the passport config code
+
 
 const app = express();
 
@@ -13,6 +17,9 @@ app.use(cors({
     origin: "http://localhost:5173", // <-- your React/Vite app URL
     credentials: true // allow cookies
 }));
+
+// Initialize Passport
+app.use(passport.initialize()); // <-- Initialize Passport
 
 // Routes
 app.use('/api/auth', authRoutes);

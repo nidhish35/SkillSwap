@@ -6,7 +6,7 @@ import Dashboard from "./pages/Dashboard";
 
 const App: React.FC = () => {
   return (
-    <BrowserRouter>
+    
     <Router>
       <Routes>
         <Route path="/" element={<Hero />} />
@@ -14,7 +14,7 @@ const App: React.FC = () => {
         <Route path="/dashboard" element={<Dashboard />} />
       </Routes>
     </Router>
-    </BrowserRouter>
+    
   );
 };
 

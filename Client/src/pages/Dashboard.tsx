@@ -18,6 +18,7 @@ const Dashboard: React.FC = () => {
     const [posts, setPosts] = useState<Post[]>([]);
     const [user, setUser] = useState<any>(null);
     const navigate = useNavigate();
+    
 
     useEffect(() => {
         const checkAuth = async () => {

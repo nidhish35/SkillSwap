@@ -38,7 +38,7 @@ const ProfilePage: React.FC = () => {
     const [editing, setEditing] = useState(false);
     const [file, setFile] = useState<File | null>(null);
     const [preview, setPreview] = useState<string | null>(null);
-    
+
 
     useEffect(() => {
         const fetchProfile = async () => {
@@ -123,141 +123,142 @@ const ProfilePage: React.FC = () => {
             <Navbar />
             <div className="max-w-3xl mx-auto mt-10">
                 <Card className="shadow-lg rounded-2xl border border-gray-200">
-                <CardHeader className="flex flex-col items-center space-y-3">
-                    <Avatar className="w-24 h-24">
-                        <AvatarImage
-                            src={
-                                preview
-                                    ? preview
-                                    : user.profilePicture
-                                        ? user.profilePicture.startsWith("http")
-                                            ? user.profilePicture
-                                            : `http://localhost:5001${user.profilePicture}`
-                                        : undefined
-                            }
-                            alt={user.name}
-                        />
-                        <AvatarFallback>
-                            {user.name ? user.name.charAt(0).toUpperCase() : "U"}
-                        </AvatarFallback>
-                    </Avatar>
-
-
-                    {editing && (
-                        <div className="mt-2">
-                            <Input
-                                type="file"
-                                accept="image/*"
-                                onChange={handleFileChange}
+                    <CardHeader className="flex flex-col items-center space-y-3">
+                        <Avatar className="w-24 h-24">
+                            <AvatarImage
+                                src={
+                                    preview
+                                        ? preview
+                                        : user.profilePicture
+                                            ? user.profilePicture.startsWith("http")
+                                                ? user.profilePicture
+                                                : `http://localhost:5001${user.profilePicture}` // <-- added slash here
+                                            : undefined
+                                }
+                                alt={user.name}
                             />
-                            {preview && (
-                                <p className="text-xs text-muted-foreground mt-1">
-                                    New picture selected
+                            <AvatarFallback>
+                                {user.name ? user.name.charAt(0).toUpperCase() : "U"}
+                            </AvatarFallback>
+                        </Avatar>
+
+
+
+                        {editing && (
+                            <div className="mt-2">
+                                <Input
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={handleFileChange}
+                                />
+                                {preview && (
+                                    <p className="text-xs text-muted-foreground mt-1">
+                                        New picture selected
+                                    </p>
+                                )}
+                            </div>
+                        )}
+
+                        <CardTitle className="text-2xl font-bold">{user.name}</CardTitle>
+                        <div className="flex items-center space-x-2">
+                            <Badge variant="secondary">⭐ {user.rating.toFixed(1)} / 5</Badge>
+                            <Badge variant={user.onlineStatus ? "default" : "outline"}>
+                                {user.onlineStatus ? "🟢 Online" : "⚪ Offline"}
+                            </Badge>
+                        </div>
+                        <p className="text-muted-foreground">{user.email}</p>
+                    </CardHeader>
+
+                    <Separator className="my-2" />
+
+                    <CardContent className="space-y-6">
+                        {/* Bio */}
+                        <div>
+                            <label className="text-sm font-medium">Bio</label>
+                            <Textarea
+                                value={user.bio || ""}
+                                disabled={!editing}
+                                onChange={(e) => handleChange("bio", e.target.value)}
+                                placeholder="Tell something about yourself"
+                                className="mt-1"
+                            />
+                        </div>
+
+                        {/* Skills */}
+                        <div className="grid grid-cols-2 gap-4">
+                            <div>
+                                <label className="text-sm font-medium">Skills Offered</label>
+                                <Input
+                                    value={user.skillsOffered.join(", ")}
+                                    disabled={!editing}
+                                    onChange={(e) =>
+                                        handleChange(
+                                            "skillsOffered",
+                                            e.target.value.split(",").map((s) => s.trim())
+                                        )
+                                    }
+                                    placeholder="e.g. Web Dev, Graphic Design"
+                                    className="mt-1"
+                                />
+                            </div>
+                            <div>
+                                <label className="text-sm font-medium">Skills Wanted</label>
+                                <Input
+                                    value={user.skillsWanted.join(", ")}
+                                    disabled={!editing}
+                                    onChange={(e) =>
+                                        handleChange(
+                                            "skillsWanted",
+                                            e.target.value.split(",").map((s) => s.trim())
+                                        )
+                                    }
+                                    placeholder="e.g. Marketing, SEO"
+                                    className="mt-1"
+                                />
+                            </div>
+                        </div>
+
+                        {/* Feedbacks */}
+                        <div>
+                            <h3 className="text-lg font-semibold">Feedbacks</h3>
+                            {user.feedbacks.length === 0 ? (
+                                <p className="text-sm text-muted-foreground">
+                                    No feedbacks yet.
                                 </p>
+                            ) : (
+                                <ul className="space-y-3 mt-2">
+                                    {user.feedbacks.map((f, i) => (
+                                        <li
+                                            key={i}
+                                            className="p-3 border rounded-lg bg-gray-50 flex flex-col"
+                                        >
+                                            <span className="font-medium">{f.userId.name}</span>
+                                            <span className="text-sm text-muted-foreground">
+                                                {f.comment}
+                                            </span>
+                                            <span className="text-xs">⭐ {f.rating}/5</span>
+                                        </li>
+                                    ))}
+                                </ul>
                             )}
                         </div>
-                    )}
 
-                    <CardTitle className="text-2xl font-bold">{user.name}</CardTitle>
-                    <div className="flex items-center space-x-2">
-                        <Badge variant="secondary">⭐ {user.rating.toFixed(1)} / 5</Badge>
-                        <Badge variant={user.onlineStatus ? "default" : "outline"}>
-                            {user.onlineStatus ? "🟢 Online" : "⚪ Offline"}
-                        </Badge>
-                    </div>
-                    <p className="text-muted-foreground">{user.email}</p>
-                </CardHeader>
-
-                <Separator className="my-2" />
-
-                <CardContent className="space-y-6">
-                    {/* Bio */}
-                    <div>
-                        <label className="text-sm font-medium">Bio</label>
-                        <Textarea
-                            value={user.bio || ""}
-                            disabled={!editing}
-                            onChange={(e) => handleChange("bio", e.target.value)}
-                            placeholder="Tell something about yourself"
-                            className="mt-1"
-                        />
-                    </div>
-
-                    {/* Skills */}
-                    <div className="grid grid-cols-2 gap-4">
-                        <div>
-                            <label className="text-sm font-medium">Skills Offered</label>
-                            <Input
-                                value={user.skillsOffered.join(", ")}
-                                disabled={!editing}
-                                onChange={(e) =>
-                                    handleChange(
-                                        "skillsOffered",
-                                        e.target.value.split(",").map((s) => s.trim())
-                                    )
-                                }
-                                placeholder="e.g. Web Dev, Graphic Design"
-                                className="mt-1"
-                            />
+                        {/* Actions */}
+                        <div className="flex justify-end space-x-4 mt-6">
+                            {editing ? (
+                                <>
+                                    <Button onClick={handleSave}>Save Changes</Button>
+                                    <Button variant="outline" onClick={() => setEditing(false)}>
+                                        Cancel
+                                    </Button>
+                                </>
+                            ) : (
+                                <Button onClick={() => setEditing(true)}>Edit Profile</Button>
+                            )}
                         </div>
-                        <div>
-                            <label className="text-sm font-medium">Skills Wanted</label>
-                            <Input
-                                value={user.skillsWanted.join(", ")}
-                                disabled={!editing}
-                                onChange={(e) =>
-                                    handleChange(
-                                        "skillsWanted",
-                                        e.target.value.split(",").map((s) => s.trim())
-                                    )
-                                }
-                                placeholder="e.g. Marketing, SEO"
-                                className="mt-1"
-                            />
-                        </div>
-                    </div>
-
-                    {/* Feedbacks */}
-                    <div>
-                        <h3 className="text-lg font-semibold">Feedbacks</h3>
-                        {user.feedbacks.length === 0 ? (
-                            <p className="text-sm text-muted-foreground">
-                                No feedbacks yet.
-                            </p>
-                        ) : (
-                            <ul className="space-y-3 mt-2">
-                                {user.feedbacks.map((f, i) => (
-                                    <li
-                                        key={i}
-                                        className="p-3 border rounded-lg bg-gray-50 flex flex-col"
-                                    >
-                                        <span className="font-medium">{f.userId.name}</span>
-                                        <span className="text-sm text-muted-foreground">
-                                            {f.comment}
-                                        </span>
-                                        <span className="text-xs">⭐ {f.rating}/5</span>
-                                    </li>
-                                ))}
-                            </ul>
-                        )}
-                    </div>
-
-                    {/* Actions */}
-                    <div className="flex justify-end space-x-4 mt-6">
-                        {editing ? (
-                            <>
-                                <Button onClick={handleSave}>Save Changes</Button>
-                                <Button variant="outline" onClick={() => setEditing(false)}>
-                                    Cancel
-                                </Button>
-                            </>
-                        ) : (
-                            <Button onClick={() => setEditing(true)}>Edit Profile</Button>
-                        )}
-                    </div>
-                </CardContent>
-            </Card>
-        </div>
+                    </CardContent>
+                </Card>
+            </div>
         </>
     );
 };

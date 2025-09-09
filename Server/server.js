@@ -33,6 +33,11 @@ app.use(passport.initialize()); // <-- Initialize Passport
 app.use('/api/auth', authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+app.use(
+    "/uploads/profile-pictures",
+    express.static(path.join(__dirname, "uploads/profile-pictures"))
+);
+
 
 
 // serve uploads folder as static

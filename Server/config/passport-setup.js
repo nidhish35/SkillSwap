@@ -1,37 +1,110 @@
-// backend/config/passport-setup.js
-const passport = require('passport');
-const GoogleStrategy = require('passport-google-oauth20').Strategy;
-const User = require('../models/Users'); // Make sure you have a User model
+// // backend/config/passport-setup.js
+// const passport = require("passport");
+// const GoogleStrategy = require("passport-google-oauth20").Strategy;
+// const User = require("../models/Users");
 
-passport.use(new GoogleStrategy({
-    // options for google strategy
-    clientID: process.env.GOOGLE_CLIENT_ID,
-    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    callbackURL: '/api/auth/google/callback' // Matches the one in Google Console
-},
-async (accessToken, refreshToken, profile, done) => {
-    // This function is called when a user successfully authenticates with Google
-    try {
-        // Check if user already exists in your DB
-        let currentUser = await User.findOne({ googleId: profile.id });
+// passport.use(
+//     new GoogleStrategy(
+//         {
+//             clientID: process.env.GOOGLE_CLIENT_ID,
+//             clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+//             callbackURL: "/api/auth/google/callback", // must match your Google Console
+//         },
+//         async (accessToken, refreshToken, profile, done) => {
+//             try {
+//                 let currentUser = await User.findOne({ googleId: profile.id });
 
-        if (currentUser) {
-            // Already have the user
-            console.log('User is:', currentUser);
-            done(null, currentUser);
-        } else {
-            // If not, create a new user in your DB
-            const newUser = await new User({
-                googleId: profile.id,
-                name: profile.displayName,
-                email: profile.emails[0].value,
-                // You can add other fields from the profile object as needed
-                // e.g., profilePicture: profile.photos[0].value
-            }).save();
-            console.log('New user created:', newUser);
-            done(null, newUser);
+//                 if (currentUser) {
+//                     // Update profile picture if Google provides one
+//                     if (profile.photos && profile.photos.length > 0) {
+//                         currentUser.profilePicture = profile.photos[0].value;
+//                         await currentUser.save();
+//                     }
+
+//                     console.log("User is:", currentUser);
+//                     return done(null, currentUser);
+//                 }
+
+//                 // Create new Google user
+//                 const newUser = await new User({
+//                     googleId: profile.id,
+//                     name: profile.displayName,
+//                     email: profile.emails[0].value,
+//                     profilePicture:
+//                         profile.photos && profile.photos.length > 0
+//                             ? profile.photos[0].value
+//                             : undefined,
+//                 }).save();
+
+//                 console.log("New user created:", newUser);
+//                 return done(null, newUser);
+//             } catch (error) {
+//                 return done(error, null);
+//             }
+//         }
+//     )
+// );
+
+const axios = require("axios");
+const fs = require("fs");
+const path = require("path");
+const passport = require("passport");
+const GoogleStrategy = require("passport-google-oauth20").Strategy;
+const User = require("../models/Users");
+
+passport.use(
+    new GoogleStrategy(
+        {
+            clientID: process.env.GOOGLE_CLIENT_ID,
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+            callbackURL: "/api/auth/google/callback",
+        },
+        async (accessToken, refreshToken, profile, done) => {
+            try {
+                let currentUser = await User.findOne({ googleId: profile.id });
+
+                if (currentUser) {
+                    // Update profile picture
+                    if (profile.photos && profile.photos.length > 0) {
+                        const photoUrl = profile.photos[0].value;
+                        const fileName = `${profile.id}.jpg`;
+                        const uploadPath = path.join(__dirname, "../uploads/profile-pictures", fileName);
+
+                        // Download inside async function
+                        const imageRes = await axios.get(photoUrl, { responseType: "arraybuffer" });
+                        fs.writeFileSync(uploadPath, imageRes.data);
+
+                        currentUser.profilePicture = `/uploads/profile-pictures/${fileName}`;
+                        await currentUser.save();
+                    }
+
+                    return done(null, currentUser);
+                }
+
+                // Create new user
+                let profilePicturePath;
+                if (profile.photos && profile.photos.length > 0) {
+                    const photoUrl = profile.photos[0].value;
+                    const fileName = `${profile.id}.jpg`;
+                    const uploadPath = path.join(__dirname, "../uploads/profile-pictures", fileName);
+
+                    const imageRes = await axios.get(photoUrl, { responseType: "arraybuffer" });
+                    fs.writeFileSync(uploadPath, imageRes.data);
+
+                    profilePicturePath = `/uploads/profile-pictures/${fileName}`;
+                }
+
+                const newUser = await new User({
+                    googleId: profile.id,
+                    name: profile.displayName,
+                    email: profile.emails[0].value,
+                    profilePicture: profilePicturePath,
+                }).save();
+
+                return done(null, newUser);
+            } catch (err) {
+                return done(err, null);
+            }
         }
-    } catch (error) {
-        done(error, null);
-    }
-}));
+    )
+);

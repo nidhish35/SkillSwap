@@ -33,7 +33,7 @@ const Navbar: React.FC = () => {
 
     return (
         <nav className="bg-white shadow-md p-4 flex justify-between items-center">
-            <h1 className="text-xl font-bold">SkillSwap</h1>
+            <h1 className="text-xl font-bold" onClick={() => navigate("/dashboard")}>SkillSwap</h1>
             <div className="space-x-4">
                 <Button variant="outline" onClick={() => navigate("/profile")}>Profile</Button>
                 <Button variant="outline" onClick={() => navigate("/chat")}>Chat</Button>

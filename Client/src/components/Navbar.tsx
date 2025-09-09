@@ -9,7 +9,7 @@ const Navbar: React.FC = () => {
     // const handleLogout = async () => {
     //     await fetch("http://localhost:5001/api/auth/logout", {
     //         method: "POST",
-            
+
     //     });
     //     navigate("/auth");
     // };

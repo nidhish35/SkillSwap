@@ -19,7 +19,8 @@ const userSchema = new mongoose.Schema({
     profilePicture: {
         type: String // URL to profile picture
     },
-    googleId: { type: String,
+    googleId: {
+        type: String,
         unique: true,
         sparse: true
     },
@@ -27,43 +28,41 @@ const userSchema = new mongoose.Schema({
         type: String,
         maxlength: 500
     },
-    skillsOffered: [
-        {
-            type: String
-        }
-    ],
-    skillsWanted: [
-        {
-            type: String
-        }
-    ],
+    skillsOffered: {
+        type: [String],
+        default: []
+    },
+    skillsWanted: {
+        type: [String],
+        default: []
+    },
     rating: {
         type: Number,
         default: 0
-    },
-    feedbacks: [
-        {
-            userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-            comment: String,
-            rating: Number,
-            date: { type: Date, default: Date.now }
-        }
-    ],
-    onlineStatus: {
-        type: Boolean,
-        default: false
-    },
-    lastLogin: {
-        type: Date
-    },
-    createdAt: {
-        type: Date,
-        default: Date.now
+},
+feedbacks: [
+    {
+        userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+        comment: String,
+        rating: Number,
+        date: { type: Date, default: Date.now }
     }
+],
+    onlineStatus: {
+    type: Boolean,
+        default: false
+},
+lastLogin: {
+    type: Date
+},
+createdAt: {
+    type: Date,
+        default: Date.now
+}
 });
 
 // Optional: method to calculate average rating
-userSchema.methods.calculateRating = function() {
+userSchema.methods.calculateRating = function () {
     if (this.feedbacks.length === 0) return 0;
     const sum = this.feedbacks.reduce((acc, f) => acc + f.rating, 0);
     this.rating = sum / this.feedbacks.length;

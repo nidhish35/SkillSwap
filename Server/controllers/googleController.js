@@ -1,20 +1,11 @@
 const passport = require('passport');
 const jwt = require('jsonwebtoken');
 
-/**
- * @desc    Initiates the Google OAuth 2.0 authentication flow
- * @route   GET /api/auth/google
- * @access  Public
- */
+
 const googleLogin = passport.authenticate('google', {
     scope: ['profile', 'email'] // The information we are requesting from Google
 });
 
-/**
- * @desc    Handles the callback after Google has authenticated the user
- * @route   GET /api/auth/google/callback
- * @access  Public
- */
 const handleGoogleCallback = (req, res) => {
     // At this point, `req.user` is populated by the Passport strategy's `done` function.
     // We can now generate our own application-specific token (JWT).

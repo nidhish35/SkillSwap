@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
 import BottomBar from "../components/BottomBar";
@@ -10,6 +8,8 @@ import {
     CardTitle,
 } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import { Handshake, Sparkles, Heart, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -18,21 +18,16 @@ import {
     DialogContent,
     DialogHeader,
     DialogTitle,
+    DialogFooter,
     DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
-import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 
 interface Comment {
     userId: {
         _id: string;
         name: string;
         profilePicture?: string;
-        email?: string;
-        skillsOffered?: string[];
-        skillsWanted?: string[];
     } | string;
     text: string;
     date: string;
@@ -50,39 +45,46 @@ interface Post {
         _id: string;
         name: string;
         profilePicture?: string;
-        email?: string;
-        skillsOffered?: string[];
-        skillsWanted?: string[];
     };
 }
 
-const BASE = "http://localhost:5001"; // replace with env var if needed
+const BASE = "http://localhost:5001"; // update to env var if needed
 
 const Dashboard: React.FC = () => {
     const [posts, setPosts] = useState<Post[]>([]);
     const [user, setUser] = useState<any>(null);
     const [newComment, setNewComment] = useState("");
-    const [selectedUser, setSelectedUser] = useState<any>(null);
     const navigate = useNavigate();
 
+    // 🔹 Resolve avatar/profile images robustly
     const resolveProfileImage = (profilePicture?: string) => {
         if (!profilePicture) return "";
+
         const s = profilePicture.trim();
+
+        // 1) Full URL
         if (/^https?:\/\//i.test(s)) return s;
+
+        // 2) Absolute path from server
         if (s.startsWith("/")) return `${BASE}${s}`;
+
+        // 3) Path containing 'uploads' or 'profile-pictures'
         if (s.includes("uploads") || s.includes("profile-pictures")) {
             return `${BASE}/${s.replace(/^\/+/, "")}`;
         }
+
+        // 4) Otherwise assume it's a filename stored by uploader
         return `${BASE}/uploads/profile-pictures/${encodeURIComponent(s)}`;
     };
 
+    // 🔹 Get display name for comment
     const getCommentUserName = (comment: Comment) => {
         if (!comment.userId) return "User";
         if (typeof comment.userId === "string") return "User";
         return comment.userId.name || "User";
     };
 
-    // Authentication
+    // ✅ Check authentication
     useEffect(() => {
         const checkAuth = async () => {
             try {
@@ -98,7 +100,7 @@ const Dashboard: React.FC = () => {
         checkAuth();
     }, []);
 
-    // Fetch posts
+    // ✅ Fetch posts once authenticated
     useEffect(() => {
         if (user) {
             const fetchPosts = async () => {
@@ -115,6 +117,7 @@ const Dashboard: React.FC = () => {
         }
     }, [user]);
 
+    // ✅ Like toggle
     const handleLike = async (postId: string) => {
         try {
             await axios.post(
@@ -139,8 +142,10 @@ const Dashboard: React.FC = () => {
         }
     };
 
+    // ✅ Add comment
     const handleAddComment = async (postId: string) => {
         if (!newComment.trim()) return;
+
         try {
             const res = await axios.post<Post>(
                 `${BASE}/api/posts/${postId}/comment`,
@@ -150,7 +155,7 @@ const Dashboard: React.FC = () => {
             setPosts((prev) =>
                 prev.map((p) => (p._id === postId ? (res.data as Post) : p))
             );
-            setNewComment("");
+            setNewComment(""); // clear input
         } catch (err) {
             console.error("Error adding comment:", err);
         }
@@ -177,90 +182,19 @@ const Dashboard: React.FC = () => {
                                 <CardHeader
                                     className="flex items-center gap-4 bg-gradient-to-r from-indigo-100 via-purple-50 to-pink-50 p-4"
                                 >
-                                    <Dialog>
-                                        <DialogTrigger asChild>
-                                            <div
-                                                className="flex items-center cursor-pointer"
-                                                onClick={() => setSelectedUser(post.user)}
-                                            >
-                                                <Avatar className="w-12 h-12 ring-2 ring-indigo-300">
-                                                    <AvatarImage
-                                                        src={resolveProfileImage(post.user?.profilePicture)}
-                                                        alt={post.user?.name}
-                                                    />
-                                                    <AvatarFallback>
-                                                        {post.user?.name?.charAt(0) || "U"}
-                                                    </AvatarFallback>
-                                                </Avatar>
-                                                <div className="flex flex-col ml-2">
-                                                    <CardTitle className="text-lg font-semibold text-gray-800">
-                                                        {post.title}
-                                                    </CardTitle>
-                                                    <p className="text-sm text-gray-500">
-                                                        By {post.user?.name || "Unknown"}
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        </DialogTrigger>
-
-                                        <DialogContent className="max-w-md">
-                                            <DialogHeader>
-                                                <DialogTitle>
-                                                    <VisuallyHidden>
-                                                        {selectedUser?.name || "User Profile"}
-                                                    </VisuallyHidden>
-                                                </DialogTitle>
-                                            </DialogHeader>
-
-                                            {selectedUser && (
-                                                <div className="space-y-4">
-                                                    <div className="flex items-center gap-4">
-                                                        <Avatar className="w-16 h-16 ring-2 ring-indigo-300">
-                                                            <AvatarImage
-                                                                src={resolveProfileImage(selectedUser.profilePicture)}
-                                                                alt={selectedUser.name}
-                                                            />
-                                                            <AvatarFallback>
-                                                                {selectedUser.name?.charAt(0) || "U"}
-                                                            </AvatarFallback>
-                                                        </Avatar>
-                                                        <div className="flex flex-col">
-                                                            <h2 className="text-xl font-bold text-gray-800">{selectedUser.name}</h2>
-                                                            {selectedUser.email && (
-                                                                <p className="text-gray-500">{selectedUser.email}</p>
-                                                            )}
-                                                        </div>
-                                                    </div>
-
-                                                    {selectedUser.skillsOffered?.length > 0 && (
-                                                        <div>
-                                                            <h3 className="text-gray-600 font-medium mb-1">Skills Offered</h3>
-                                                            <div className="flex flex-wrap gap-2">
-                                                                {selectedUser.skillsOffered.map((skill: string, idx: number) => (
-                                                                    <Badge key={idx} className="bg-blue-100 text-blue-700 px-2 py-1 rounded-md">
-                                                                        {skill}
-                                                                    </Badge>
-                                                                ))}
-                                                            </div>
-                                                        </div>
-                                                    )}
-
-                                                    {selectedUser.skillsWanted?.length > 0 && (
-                                                        <div>
-                                                            <h3 className="text-gray-600 font-medium mb-1">Skills Wanted</h3>
-                                                            <div className="flex flex-wrap gap-2">
-                                                                {selectedUser.skillsWanted.map((skill: string, idx: number) => (
-                                                                    <Badge key={idx} className="bg-green-100 text-green-700 px-2 py-1 rounded-md">
-                                                                        {skill}
-                                                                    </Badge>
-                                                                ))}
-                                                            </div>
-                                                        </div>
-                                                    )}
-                                                </div>
-                                            )}
-                                        </DialogContent>
-                                    </Dialog>
+                                    <Avatar className="w-12 h-12 ring-2 ring-indigo-300">
+                                        <AvatarImage
+                                            src={resolveProfileImage(post.user?.profilePicture)}
+                                            alt={post.user?.name}
+                                        />
+                                        <AvatarFallback>{post.user?.name?.charAt(0) || "U"}</AvatarFallback>
+                                    </Avatar>
+                                    <div className="flex flex-col">
+                                        <CardTitle className="text-lg font-semibold text-gray-800">
+                                            {post.title}
+                                        </CardTitle>
+                                        <p className="text-sm text-gray-500">By {post.user?.name || "Unknown"}</p>
+                                    </div>
                                 </CardHeader>
 
                                 {/* Body */}
@@ -353,19 +287,20 @@ const Dashboard: React.FC = () => {
                                                         <p className="text-sm text-gray-500">No comments yet.</p>
                                                     )}
                                                 </div>
-                                                <div className="flex gap-2 mt-2">
+                                                <DialogFooter className="flex gap-2">
                                                     <Input
                                                         placeholder="Write a comment..."
                                                         value={newComment}
                                                         onChange={(e) => setNewComment(e.target.value)}
                                                     />
                                                     <Button onClick={() => handleAddComment(post._id)}>Send</Button>
-                                                </div>
+                                                </DialogFooter>
                                             </DialogContent>
                                         </Dialog>
                                     </div>
                                 </CardContent>
                             </Card>
+
                         ))}
                     </div>
                 )}

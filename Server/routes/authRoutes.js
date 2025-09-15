@@ -5,6 +5,7 @@ const { protect } = require('../middleware/authMiddleware');
 // Import controllers
 const { register } = require('../controllers/registerController');
 const { login } = require('../controllers/loginController');
+const { logout } = require('../controllers/logoutController');
 const { googleLogin, googleCallback } = require('../controllers/googleController'); // Google OAuth
 const User = require('../models/Users');
 const Post = require('../models/Posts');
@@ -16,17 +17,7 @@ router.get('/google/callback', googleCallback);
 // Auth routes
 router.post('/register', register);
 router.post('/login', login);
-
-router.post('/logout', (req, res) => {
-    res.clearCookie('uid', {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
-        path: '/',
-    });
-    console.log('Logout: clearing cookie');
-    res.status(200).json({ message: 'Logged out successfully' });
-});
+router.post('/logout', logout);
 
 // Protected route to get current user
 router.get('/me', protect, (req, res) => {

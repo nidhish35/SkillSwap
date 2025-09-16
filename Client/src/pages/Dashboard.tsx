@@ -242,8 +242,8 @@ const Dashboard: React.FC = () => {
                                         >
                                             <Heart
                                                 className={`w-5 h-5 transition-transform ${post.likes.some((l) => l.userId === user._id)
-                                                        ? "fill-red-500 text-red-500 animate-pulse"
-                                                        : "text-gray-500"
+                                                    ? "fill-red-500 text-red-500 animate-pulse"
+                                                    : "text-gray-500"
                                                     }`}
                                             />
                                             <span>{post.likes.length}</span>
@@ -297,6 +297,19 @@ const Dashboard: React.FC = () => {
                                                 </DialogFooter>
                                             </DialogContent>
                                         </Dialog>
+                                        <Button
+                                            variant="ghost"
+                                            className="flex items-center gap-2 hover:text-indigo-500 transition-colors"
+                                            onClick={() =>
+                                                navigate("/chat", {
+                                                    state: { recipient: post.user }, // 👈 pass the full user object
+                                                })
+                                            }
+                                        >
+                                            <MessageCircle className="w-5 h-5 text-indigo-500" />
+                                            <span>Message</span>
+                                        </Button>
+
                                     </div>
                                 </CardContent>
                             </Card>

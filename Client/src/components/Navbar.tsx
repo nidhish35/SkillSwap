@@ -120,7 +120,7 @@ const Navbar: React.FC = () => {
                     </Button>
                 )}
 
-                <Button variant="outline" onClick={() => navigate("/chats")}>
+                <Button variant="outline" onClick={() => navigate("/chat")}>
                     Chat
                 </Button>
 

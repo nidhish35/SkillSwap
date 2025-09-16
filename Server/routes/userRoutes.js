@@ -12,7 +12,7 @@ router.get("/", protect, async (req, res) => {
     const q = req.query.q || "";
     const users = await User.find({
         name: new RegExp(q, "i"),
-        _id: { $ne: req.user._id }, // exclude yourself
+        _id: { $ne: req.user._id }, 
     })
         .limit(20)
         .select("name avatar");

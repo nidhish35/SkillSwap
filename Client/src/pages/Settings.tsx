@@ -10,6 +10,7 @@ import { Switch } from "@/components/ui/switch";
 
 import axios from "axios";
 
+const API_URL = "http://20.255.50.15:5001"; // your VM public IP
 
 
 const Settings: React.FC = () => {
@@ -77,7 +78,7 @@ const Settings: React.FC = () => {
                                 if (!confirmed) return;
 
                                 try {
-                                    await axios.delete("http://host.docker.internal:5001/api/auth/delete", {
+                                    await axios.delete(`${API_URL}/api/auth/delete`, {
                                         withCredentials: true,
                                     });
 

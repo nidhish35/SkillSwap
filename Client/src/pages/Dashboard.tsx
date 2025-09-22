@@ -48,7 +48,8 @@ interface Post {
     };
 }
 
-const BASE = "http://host.docker.internal:5001"; // update to env var if needed
+const API_URL = "http://20.255.50.15:5001"; // your VM public IP
+
 
 const Dashboard: React.FC = () => {
     const [posts, setPosts] = useState<Post[]>([]);
@@ -66,15 +67,15 @@ const Dashboard: React.FC = () => {
         if (/^https?:\/\//i.test(s)) return s;
 
         // 2) Absolute path from server
-        if (s.startsWith("/")) return `${BASE}${s}`;
+        if (s.startsWith("/")) return `${API_URL}${s}`;
 
         // 3) Path containing 'uploads' or 'profile-pictures'
         if (s.includes("uploads") || s.includes("profile-pictures")) {
-            return `${BASE}/${s.replace(/^\/+/, "")}`;
+            return `${API_URL}/${s.replace(/^\/+/, "")}`;
         }
 
         // 4) Otherwise assume it's a filename stored by uploader
-        return `${BASE}/uploads/profile-pictures/${encodeURIComponent(s)}`;
+        return `${API_URL}/uploads/profile-pictures/${encodeURIComponent(s)}`;
     };
 
     // 🔹 Get display name for comment
@@ -89,7 +90,7 @@ const Dashboard: React.FC = () => {
         const checkAuth = async () => {
             try {
                 const res = await axios.get<{ user: any }>(
-                    `${BASE}/api/auth/me`,
+                    `${API_URL}/api/auth/me`,
                     { withCredentials: true }
                 );
                 setUser(res.data.user);
@@ -105,7 +106,7 @@ const Dashboard: React.FC = () => {
         if (user) {
             const fetchPosts = async () => {
                 try {
-                    const res = await axios.get<Post[]>(`${BASE}/api/posts`, {
+                    const res = await axios.get<Post[]>(`${API_URL}/api/posts`, {
                         withCredentials: true,
                     });
                     setPosts(res.data);
@@ -121,7 +122,7 @@ const Dashboard: React.FC = () => {
     const handleLike = async (postId: string) => {
         try {
             await axios.post(
-                `${BASE}/api/posts/${postId}/like`,
+                `${API_URL}/api/posts/${postId}/like`,
                 {},
                 { withCredentials: true }
             );
@@ -148,7 +149,7 @@ const Dashboard: React.FC = () => {
 
         try {
             const res = await axios.post<Post>(
-                `${BASE}/api/posts/${postId}/comment`,
+                `${API_URL}/api/posts/${postId}/comment`,
                 { text: newComment },
                 { withCredentials: true }
             );

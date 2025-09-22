@@ -32,6 +32,9 @@ interface UserProfile {
     googleId?: string;
 }
 
+const API_URL = "http://20.255.50.15:5001"; // your VM public IP
+
+
 const ProfilePage: React.FC = () => {
     const [user, setUser] = useState<UserProfile | null>(null);
     const [loading, setLoading] = useState(true);
@@ -44,7 +47,7 @@ const ProfilePage: React.FC = () => {
         const fetchProfile = async () => {
             try {
                 const res = await axios.get<UserProfile>(
-                    `http://host.docker.internal:5001/api/users/me`,
+                    `${API_URL}/api/users/me`,
                     { withCredentials: true }
                 );
                 setUser(res.data as UserProfile);
@@ -81,7 +84,7 @@ const ProfilePage: React.FC = () => {
                 formData.append("profilePicture", file);
 
                 const uploadRes = await axios.post(
-                    "http://host.docker.internal:5001/api/upload/profile-picture",
+                    `${API_URL}/api/upload/profile-picture`,
                     formData,
                     {
                         withCredentials: true,
@@ -96,7 +99,7 @@ const ProfilePage: React.FC = () => {
 
             // Save other updates
             const res = await axios.put(
-                `http://host.docker.internal:5001/api/users/me`,
+                `${API_URL}/api/users/me`,
                 {
                     name: user.name,
                     bio: user.bio,
@@ -132,7 +135,7 @@ const ProfilePage: React.FC = () => {
                                         : user.profilePicture
                                             ? user.profilePicture.startsWith("http")
                                                 ? user.profilePicture
-                                                : `http://host.docker.internal:5001${user.profilePicture}` // <-- added slash here
+                                                : `${API_URL}${user.profilePicture}` // <-- added slash here
                                             : undefined
                                 }
                                 alt={user.name}

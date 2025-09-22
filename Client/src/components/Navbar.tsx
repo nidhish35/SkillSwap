@@ -4,7 +4,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
-const BASE = "http://host.docker.internal:5001"; // change to env var if needed
+const API_URL = "http://20.255.50.15:5001"; // your VM public IP
+
 
 const Navbar: React.FC = () => {
     const navigate = useNavigate();
@@ -20,16 +21,16 @@ const Navbar: React.FC = () => {
         // 1) Already a full URL (Google OAuth)
         if (/^https?:\/\//i.test(s)) return s;
 
-        // 2) Absolute path from server: "/uploads/..." -> http://host.docker.internal:5001/uploads/...
-        if (s.startsWith("/")) return `${BASE}${s}`;
+        // 2) Absolute path from server: "/uploads/..." -> http://20.255.50.15:5001/uploads/...
+        if (s.startsWith("/")) return `${API_URL}${s}`;
 
         // 3) If it already contains 'uploads' or 'profile-pictures' (e.g. "uploads/profile-pictures/abc.jpg" or "profile-pictures/abc.jpg")
         if (s.includes("uploads") || s.includes("profile-pictures")) {
-            return `${BASE}/${s.replace(/^\/+/, "")}`;
+            return `${API_URL}/${s.replace(/^\/+/, "")}`;
         }
 
         // 4) Otherwise assume it's just a filename stored by your uploader -> uploads/profile-pictures/<filename>
-        return `${BASE}/uploads/profile-pictures/${encodeURIComponent(s)}`;
+        return `${API_URL}/uploads/profile-pictures/${encodeURIComponent(s)}`;
     };
 
     // Fetch logged-in user (try both res.data.user and res.data)

@@ -5,6 +5,9 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { Home, Compass, PlusCircle, Settings } from "lucide-react";
 import axios from "axios";
 
+const API_URL = "http://20.255.50.15:5001"; // your VM public IP
+
+
 const BottomBar: React.FC = () => {
     const navigate = useNavigate();
     const location = useLocation();
@@ -31,7 +34,7 @@ const BottomBar: React.FC = () => {
         if (showExplorePopup) {
             const fetchTrending = async () => {
                 try {
-                    const res = await axios.get("http://host.docker.internal:5001/api/posts/trending", {
+                    const res = await axios.get(`${API_URL}/api/posts/trending`, {
                         withCredentials: true,
                     });
                     setTrendingPosts(res.data as any[]);

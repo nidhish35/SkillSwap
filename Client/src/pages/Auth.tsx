@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
+
+
 // A simple SVG icon for the Google logo.
 // You could also use a library like 'lucide-react' if it's installed.
 const GoogleIcon = (props: React.SVGProps<SVGSVGElement>) => (
@@ -16,12 +18,13 @@ const GoogleIcon = (props: React.SVGProps<SVGSVGElement>) => (
     </svg>
 );
 
+const API_URL = "http://20.255.50.15:5001"; // change to env var if needed
 
 // A dedicated component for the Google Login Button
 const GoogleLoginButton = () => {
     // The button is a link to the backend route that starts the Google OAuth flow.
     return (
-        <a href="http://host.docker.internal:5001/api/auth/google" className="w-full">
+        <a href={`${API_URL}/api/auth/google`} className="w-full">
             <Button variant="outline" className="w-full flex items-center justify-center gap-2">
                 <GoogleIcon />
                 Sign in with Google
@@ -67,7 +70,7 @@ const Auth: React.FC = () => {
             };
 
             await axios.post(
-                "http://host.docker.internal:5001/api/auth/register",
+                `${API_URL}/api/auth/register`,
                 payload,
                 { withCredentials: true }
             );
@@ -85,7 +88,7 @@ const Auth: React.FC = () => {
         setError(null); // Reset error on new submission
         try {
             await axios.post(
-                "http://host.docker.internal:5001/api/auth/login",
+                `${API_URL}/api/auth/login`,
                 loginForm,
                 { withCredentials: true }
             );

@@ -12,6 +12,9 @@ import {
     CardTitle,
 } from "@/components/ui/card";
 
+const API_URL = "http://20.255.50.15:5001"; // your VM public IP
+
+
 const NewPost: React.FC = () => {
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
@@ -29,7 +32,7 @@ const NewPost: React.FC = () => {
         };
 
         try {
-            await axios.post("http://host.docker.internal:5001/api/posts", newPost, {
+            await axios.post(`${API_URL}/api/posts`, newPost, {
                 withCredentials: true,
             });
             navigate("/dashboard");

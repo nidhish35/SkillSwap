@@ -8,7 +8,8 @@ import ConversationList from "../components/ConversationList";
 import ChatWindow from "../components/ChatWindow";
 import type { User, Message } from "../types";
 
-const BASE = "http://host.docker.internal:5001";
+const API_URL = "http://20.255.50.15:5001"; // your VM public IP
+
 
 const ChatPage: React.FC = () => {
     const [socket, setSocket] = useState<Socket | null>(null);
@@ -32,7 +33,7 @@ const ChatPage: React.FC = () => {
     useEffect(() => {
         const checkAuth = async () => {
             try {
-                const res = await axios.get<{ user: User }>(`${BASE}/api/auth/me`, {
+                const res = await axios.get<{ user: User }>(`${API_URL}/api/auth/me`, {
                     withCredentials: true,
                 });
                 setUser(res.data.user);
@@ -54,7 +55,7 @@ const ChatPage: React.FC = () => {
             return;
         }
 
-        const s = io(BASE, {
+        const s = io(API_URL, {
             transports: ["websocket", "polling"],
             auth: { token }, // 👈 send token explicitly
         });
@@ -93,7 +94,7 @@ const ChatPage: React.FC = () => {
         if (!user) return;
 
         axios
-            .get<User[]>(`${BASE}/api/messages/conversations`, {
+            .get<User[]>(`${API_URL}/api/messages/conversations`, {
                 withCredentials: true,
             })
             .then((res) => {
@@ -119,7 +120,7 @@ const ChatPage: React.FC = () => {
         if (!selectedUser) return;
 
         axios
-            .get<Message[]>(`${BASE}/api/messages/${selectedUser._id}`, {
+            .get<Message[]>(`${API_URL}/api/messages/${selectedUser._id}`, {
                 withCredentials: true,
             })
             .then((res) => setMessages(res.data))

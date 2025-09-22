@@ -77,7 +77,7 @@ const Settings: React.FC = () => {
                                 if (!confirmed) return;
 
                                 try {
-                                    await axios.delete("http://localhost:5001/api/auth/delete", {
+                                    await axios.delete("http://host.docker.internal:5001/api/auth/delete", {
                                         withCredentials: true,
                                     });
 

@@ -4,7 +4,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
-const BASE = "http://localhost:5001"; // change to env var if needed
+const BASE = "http://host.docker.internal:5001"; // change to env var if needed
 
 const Navbar: React.FC = () => {
     const navigate = useNavigate();
@@ -20,7 +20,7 @@ const Navbar: React.FC = () => {
         // 1) Already a full URL (Google OAuth)
         if (/^https?:\/\//i.test(s)) return s;
 
-        // 2) Absolute path from server: "/uploads/..." -> http://localhost:5001/uploads/...
+        // 2) Absolute path from server: "/uploads/..." -> http://host.docker.internal:5001/uploads/...
         if (s.startsWith("/")) return `${BASE}${s}`;
 
         // 3) If it already contains 'uploads' or 'profile-pictures' (e.g. "uploads/profile-pictures/abc.jpg" or "profile-pictures/abc.jpg")
@@ -36,7 +36,7 @@ const Navbar: React.FC = () => {
     useEffect(() => {
         const fetchUser = async () => {
             try {
-                const res = await axios.get("http://localhost:5001/api/auth/me", {
+                const res = await axios.get("http://host.docker.internal:5001/api/auth/me", {
                     withCredentials: true,
                 });
                 // log the response for debugging
@@ -68,7 +68,7 @@ const Navbar: React.FC = () => {
     const handleLogout = async () => {
         try {
             await axios.post(
-                "http://localhost:5001/api/auth/logout",
+                "http://host.docker.internal:5001/api/auth/logout",
                 {},
                 { withCredentials: true }
             );

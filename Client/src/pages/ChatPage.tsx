@@ -8,7 +8,7 @@ import ConversationList from "../components/ConversationList";
 import ChatWindow from "../components/ChatWindow";
 import type { User, Message } from "../types";
 
-const BASE = "http://localhost:5001";
+const BASE = "http://host.docker.internal:5001";
 
 const ChatPage: React.FC = () => {
     const [socket, setSocket] = useState<Socket | null>(null);

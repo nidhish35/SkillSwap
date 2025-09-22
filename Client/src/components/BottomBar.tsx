@@ -31,7 +31,7 @@ const BottomBar: React.FC = () => {
         if (showExplorePopup) {
             const fetchTrending = async () => {
                 try {
-                    const res = await axios.get("http://localhost:5001/api/posts/trending", {
+                    const res = await axios.get("http://host.docker.internal:5001/api/posts/trending", {
                         withCredentials: true,
                     });
                     setTrendingPosts(res.data as any[]);

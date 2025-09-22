@@ -48,7 +48,7 @@ interface Post {
     };
 }
 
-const BASE = "http://localhost:5001"; // update to env var if needed
+const BASE = "http://host.docker.internal:5001"; // update to env var if needed
 
 const Dashboard: React.FC = () => {
     const [posts, setPosts] = useState<Post[]>([]);

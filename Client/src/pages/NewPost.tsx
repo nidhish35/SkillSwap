@@ -29,7 +29,7 @@ const NewPost: React.FC = () => {
         };
 
         try {
-            await axios.post("http://localhost:5001/api/posts", newPost, {
+            await axios.post("http://host.docker.internal:5001/api/posts", newPost, {
                 withCredentials: true,
             });
             navigate("/dashboard");

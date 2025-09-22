@@ -44,7 +44,7 @@ const ProfilePage: React.FC = () => {
         const fetchProfile = async () => {
             try {
                 const res = await axios.get<UserProfile>(
-                    `http://localhost:5001/api/users/me`,
+                    `http://host.docker.internal:5001/api/users/me`,
                     { withCredentials: true }
                 );
                 setUser(res.data as UserProfile);
@@ -81,7 +81,7 @@ const ProfilePage: React.FC = () => {
                 formData.append("profilePicture", file);
 
                 const uploadRes = await axios.post(
-                    "http://localhost:5001/api/upload/profile-picture",
+                    "http://host.docker.internal:5001/api/upload/profile-picture",
                     formData,
                     {
                         withCredentials: true,
@@ -96,7 +96,7 @@ const ProfilePage: React.FC = () => {
 
             // Save other updates
             const res = await axios.put(
-                `http://localhost:5001/api/users/me`,
+                `http://host.docker.internal:5001/api/users/me`,
                 {
                     name: user.name,
                     bio: user.bio,
@@ -132,7 +132,7 @@ const ProfilePage: React.FC = () => {
                                         : user.profilePicture
                                             ? user.profilePicture.startsWith("http")
                                                 ? user.profilePicture
-                                                : `http://localhost:5001${user.profilePicture}` // <-- added slash here
+                                                : `http://host.docker.internal:5001${user.profilePicture}` // <-- added slash here
                                             : undefined
                                 }
                                 alt={user.name}

@@ -21,7 +21,7 @@ const GoogleIcon = (props: React.SVGProps<SVGSVGElement>) => (
 const GoogleLoginButton = () => {
     // The button is a link to the backend route that starts the Google OAuth flow.
     return (
-        <a href="http://localhost:5001/api/auth/google" className="w-full">
+        <a href="http://host.docker.internal:5001/api/auth/google" className="w-full">
             <Button variant="outline" className="w-full flex items-center justify-center gap-2">
                 <GoogleIcon />
                 Sign in with Google
@@ -67,7 +67,7 @@ const Auth: React.FC = () => {
             };
 
             await axios.post(
-                "http://localhost:5001/api/auth/register",
+                "http://host.docker.internal:5001/api/auth/register",
                 payload,
                 { withCredentials: true }
             );
@@ -85,7 +85,7 @@ const Auth: React.FC = () => {
         setError(null); // Reset error on new submission
         try {
             await axios.post(
-                "http://localhost:5001/api/auth/login",
+                "http://host.docker.internal:5001/api/auth/login",
                 loginForm,
                 { withCredentials: true }
             );

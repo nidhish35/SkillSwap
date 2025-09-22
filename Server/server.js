@@ -33,7 +33,7 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(
     cors({
-        origin: "http://localhost:3000", // React app
+        origin: "http://20.255.50.15:3000", // React app
         credentials: true,
     })
 );

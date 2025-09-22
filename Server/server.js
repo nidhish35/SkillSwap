@@ -33,7 +33,7 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(
     cors({
-        origin: "http://localhost:5173", // React app
+        origin: "http://localhost:3000", // React app
         credentials: true,
     })
 );
@@ -73,7 +73,7 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
     cors: {
-        origin: "http://localhost:5173", // React frontend
+        origin: "http://localhost:3000", // React frontend
         methods: ["GET", "POST"],
         credentials: true, // allow cookies
     },

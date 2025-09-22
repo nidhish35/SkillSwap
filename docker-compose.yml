@@ -1,0 +1,32 @@
+version: "3.9"
+
+services:
+  server:
+    build: ./server
+    container_name: skillswap_server
+    ports:
+      - "5001:5001"
+    env_file:
+      - ./server/.env
+    depends_on:
+      - mongo
+
+  client:
+    build: ./client
+    container_name: skillswap_client
+    ports:
+      - "3000:80"
+    depends_on:
+      - server
+
+  mongo:
+    image: mongo:6
+    container_name: skillswap_mongo
+    restart: always
+    volumes:
+      - mongo_data:/data/db
+    ports:
+      - "27017:27017"
+
+volumes:
+  mongo_data:

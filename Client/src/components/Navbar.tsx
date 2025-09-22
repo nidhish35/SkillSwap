@@ -37,7 +37,7 @@ const Navbar: React.FC = () => {
     useEffect(() => {
         const fetchUser = async () => {
             try {
-                const res = await axios.get("http://host.docker.internal:5001/api/auth/me", {
+                const res = await axios.get(`${API_URL}/api/auth/me`, {
                     withCredentials: true,
                 });
                 // log the response for debugging
@@ -69,7 +69,7 @@ const Navbar: React.FC = () => {
     const handleLogout = async () => {
         try {
             await axios.post(
-                "http://host.docker.internal:5001/api/auth/logout",
+                `${API_URL}/api/auth/logout`,
                 {},
                 { withCredentials: true }
             );

@@ -58,7 +58,7 @@ app.use(
 
 // Connect to MongoDB
 mongoose
-    .connect("mongodb://localhost:27017/skillswap", {
+    .connect(process.env.MONGO_URI || "mongodb://mongo:27017/skillswap", {
         useNewUrlParser: true,
         useUnifiedTopology: true,
     })

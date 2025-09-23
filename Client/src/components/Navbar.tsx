@@ -4,7 +4,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
-const API_URL = "http://20.255.50.15:5001"; // your VM public IP
+const API_URL = "http://skillswap.eastasia.cloudapp.azure.com:5001"; // your VM public IP
 
 
 const Navbar: React.FC = () => {

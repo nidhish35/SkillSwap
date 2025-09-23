@@ -48,7 +48,7 @@ interface Post {
     };
 }
 
-const API_URL = "http://20.255.50.15:5001"; // your VM public IP
+const API_URL = "http://skillswap.eastasia.cloudapp.azure.com:5001"; // your VM public IP
 
 
 const Dashboard: React.FC = () => {

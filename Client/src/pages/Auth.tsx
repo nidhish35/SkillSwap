@@ -18,7 +18,7 @@ const GoogleIcon = (props: React.SVGProps<SVGSVGElement>) => (
     </svg>
 );
 
-const API_URL = "http://20.255.50.15:5001"; // change to env var if needed
+const API_URL = "http://skillswap.eastasia.cloudapp.azure.com:5001"; // change to env var if needed
 
 // A dedicated component for the Google Login Button
 const GoogleLoginButton = () => {

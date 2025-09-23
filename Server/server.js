@@ -6,8 +6,8 @@ const passport = require("passport");
 const path = require("path");
 const jwt = require("jsonwebtoken");
 const cookie = require("cookie");
-const http = require("http");           
-const { Server } = require("socket.io"); 
+const http = require("http");
+const { Server } = require("socket.io");
 const Message = require("./models/Message");
 
 
@@ -33,10 +33,14 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(
     cors({
-        origin: "http://20.255.50.15:3000", // React app
+        origin: [
+            "http://20.255.50.15:3000",
+            "http://skillswap.eastasia.cloudapp.azure.com:3000"
+        ],
         credentials: true,
     })
 );
+
 
 // Initialize Passport
 app.use(passport.initialize());
